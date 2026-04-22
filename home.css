@@ -1395,6 +1395,8 @@
 }
 .stage-court .table-arena .hand-rack {
     z-index: 5;
+    height: 100%;
+    background-color: "blue";
 }
 .stage-court .table-arena .coin-fly-layer {
     z-index: 7;
@@ -2123,4 +2125,8 @@
     padding: 12px 28px;
     box-sizing: border-box;
     z-index: 7;
+}
+
+.turn-banner {
+    visibility: hidden;
 }
