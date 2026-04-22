@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>USURP — Components</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  body { margin: 0; padding: 48px 56px; min-height: 900px; position: relative;
+    background:
+      radial-gradient(ellipse 1400px 900px at 20% -10%, rgba(59, 79, 176, 0.35), transparent 55%),
+      radial-gradient(ellipse 1000px 700px at 90% 100%, rgba(46, 95, 184, 0.28), transparent 60%),
+      #060a1e; }
+  .page-stars { position: fixed; inset: 0; background-image: url("assets/constellations.svg"); background-size: cover; opacity: 0.4; pointer-events: none; z-index: 0; }
+  .wrap { max-width: 1328px; margin: 0 auto; position: relative; z-index: 2; }
+  header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; }
+  h1.title { font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: 56px; margin: 0; color: var(--indigo-100); }
+  .meta { color: var(--indigo-300); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; }
+  .eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--indigo-300); margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
+  .block { border: 1px solid rgba(125,142,216,0.22); border-radius: var(--r-card); padding: 28px; background: linear-gradient(180deg, rgba(20,26,68,0.9), rgba(13,18,48,0.9)); position: relative; overflow: hidden; }
+  .block::before { content:""; position:absolute; inset:0; background: radial-gradient(600px 200px at 50% 0%, rgba(125,142,216,0.1), transparent 70%); pointer-events:none; }
+  .block > * { position: relative; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+  .row:last-child { margin-bottom: 0; }
+  .label-mini { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--indigo-300); width: 80px; }
+
+  /* Role card — stellar */
+  .role-card { width: 208px; height: 300px; border-radius: var(--r-card); background: linear-gradient(155deg, #1e2a6b, #0d1230 60%, #060a1e); border: 1px solid var(--lapis-500); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 24px 60px rgba(6,10,30,0.7), inset 0 1px 0 rgba(166,181,232,0.1); }
+  .role-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 20%, rgba(125,142,216,0.25), transparent 60%); pointer-events: none; }
+  .role-card::after { content: ""; position: absolute; inset: 0; background-image: url("assets/constellations.svg"); background-size: cover; opacity: 0.45; pointer-events: none; mix-blend-mode: screen; }
+  .role-card > * { position: relative; z-index: 2; }
+  .role-card .holo-strip { position: absolute; z-index: 3; top: 14px; right: 14px; bottom: 14px; width: 6px; border-radius: 3px; background: repeating-linear-gradient(0deg, #b8cfff 0, #ffffff 2px, #7d8ed8 4px, #2e5fb8 6px, #b8cfff 8px); background-size: 100% 200%; animation: holoShift 4s linear infinite; opacity: 0.9; filter: saturate(1.2); }
+  @keyframes holoShift { to { background-position: 0 -200%; } }
+  .role-card .head { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; color: var(--lapis-300); text-transform: uppercase; }
+  .role-card .sigil { margin: 8px auto 0; width: 88px; height: 88px; display: flex; align-items: center; justify-content: center; }
+  .role-card .name { font-family: var(--font-display); font-style: italic; font-size: 36px; font-weight: 600; color: var(--indigo-100); text-align: center; line-height: 1; }
+  .role-card .title-sub { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--star-gold); text-align: center; margin-top: 4px; }
+  .role-card .ability { font-family: var(--font-mono); font-size: 10px; color: var(--indigo-200); text-align: center; margin-top: 8px; letter-spacing: 0.04em; line-height: 1.5; }
+  .role-card .foot { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; color: var(--indigo-300); opacity: 0.7; text-transform: uppercase; }
+
+  /* House slot */
+  .house-slot { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(13,18,48,0.6); border: 1px solid rgba(125,142,216,0.22); border-radius: var(--r-md); }
+  .avatar { width: 40px; height: 40px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--indigo-700), var(--indigo-900)); border: 1px solid var(--lapis-500); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-style: italic; font-size: 20px; color: var(--indigo-100); }
+  .house-slot .name { font-family: var(--font-mono); font-weight: 700; font-size: 13px; letter-spacing: 0.12em; color: var(--indigo-100); }
+  .house-slot .meta { font-family: var(--font-mono); font-size: 10px; color: var(--indigo-300); letter-spacing: 0.16em; margin-top: 2px; }
+
+  /* Cowrie — lapis */
+  .cowries { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--lapis-500); border-radius: var(--r-sm); background: rgba(46,95,184,0.1); font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--lapis-300); letter-spacing: 0.08em; }
+  .cowries .symbol { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d2dcf4, #7d8ed8 40%, #1a3a7a 85%); position: relative; }
+
+  /* Action btn */
+  .action-btn { font-family: var(--font-mono); font-weight: 700; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; padding: 14px 22px; border-radius: var(--r-sm); border: 1px solid; cursor: pointer; background: rgba(20,26,68,0.6); border-color: rgba(125,142,216,0.3); color: var(--indigo-100); display: inline-flex; align-items: center; gap: 10px; position: relative; }
+  .action-btn.seize { background: linear-gradient(180deg, #3b4fb0, #1e2a6b); color: var(--indigo-100); border-color: var(--lapis-300); box-shadow: var(--glow-indigo); }
+  .action-btn.strike { background: linear-gradient(180deg, var(--verm-400), var(--verm-500)); color: #fff1ea; border-color: var(--verm-300); box-shadow: var(--glow-verm); }
+  .action-btn.block { background: rgba(46,95,184,0.15); color: var(--lapis-300); border-color: var(--lapis-500); }
+  .action-btn.accuse { background: transparent; border-color: var(--verm-400); color: var(--verm-300); border-style: dashed; }
+
+  /* Chips */
+  .chip-v { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; padding: 4px 8px; border-radius: 2px; }
+  .chip-sun { background: rgba(232,210,138,0.12); color: var(--star-gold); border: 1px solid rgba(232,210,138,0.35); }
+  .chip-verm { background: rgba(201,61,31,0.14); color: var(--verm-300); border: 1px solid rgba(201,61,31,0.3); }
+  .chip-cel { background: rgba(46,95,184,0.14); color: var(--lapis-300); border: 1px solid rgba(46,95,184,0.35); }
+  .chip-brass { background: rgba(125,142,216,0.12); color: var(--indigo-200); border: 1px solid rgba(125,142,216,0.3); }
+  .chip-v::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+  /* Input */
+  .field { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(6,10,30,0.7); border: 1px solid rgba(125,142,216,0.3); border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 12px; color: var(--indigo-100); min-width: 240px; }
+  .field .caret { width: 8px; height: 14px; background: var(--lapis-300); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Toast */
+  .toast { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-radius: var(--r-sm); background: rgba(13,18,48,0.8); border: 1px solid rgba(125,142,216,0.3); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--indigo-100); min-width: 360px; position: relative; }
+  .toast.verm { border-color: var(--verm-500); color: var(--verm-300); }
+  .toast.cel { border-color: var(--lapis-500); color: var(--lapis-300); }
+  .toast .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .toast .time { margin-left: auto; color: var(--indigo-300); opacity: 0.6; font-size: 9px; letter-spacing: 0.2em; }
+
+  /* Turn indicator */
+  .seat { padding: 6px 12px; display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--lapis-500); border-radius: 2px; background: rgba(46,95,184,0.12); }
+  .seat .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--star-gold); box-shadow: 0 0 10px var(--star-gold); animation: pulse 1.4s ease-out infinite; }
+  @keyframes pulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+  .seat .txt { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--star-gold); font-weight: 700; }
+
+  .corner { position: absolute; width: 24px; height: 24px; border-color: var(--indigo-300); border-style: solid; border-width: 0; z-index: 5; }
+  .c-tl { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+  .c-tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+  .c-bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+  .c-br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+</style>
+</head>
+<body>
+<div class="page-stars"></div>
+<span class="corner c-tl"></span><span class="corner c-tr"></span>
+<span class="corner c-bl"></span><span class="corner c-br"></span>
+<div class="wrap">
+  <header>
+    <div>
+      <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--indigo-300); margin-bottom: 8px;">USURP · FOUNDATION 04</div>
+      <h1 class="title">Components.</h1>
+    </div>
+    <div class="meta">ROLE CARDS · ACTIONS · HOUSE SLOTS · FIELDS · TOASTS</div>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="block" style="margin-bottom: 24px;">
+        <div class="eyebrow">Role card — sci-fi operative ID</div>
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+          <div class="role-card">
+            <div class="holo-strip"></div>
+            <div class="head"><span>OP · 003 / 15</span><span>◐ × 3</span></div>
+            <div class="sigil">
+              <svg viewBox="-40 -40 80 80" width="88" height="88">
+                <g stroke="#e8d28a" stroke-width="1.5" fill="none" stroke-linecap="square">
+                  <circle cx="0" cy="0" r="32" opacity="0.25"/>
+                  <circle cx="0" cy="0" r="5" fill="#e8d28a"/>
+                  <line x1="0" y1="-32" x2="0" y2="-12"/>
+                  <line x1="20.6" y1="-24.6" x2="7.7" y2="-9.2"/>
+                  <line x1="31.5" y1="-5.6" x2="11.8" y2="-2.1"/>
+                  <line x1="27.7" y1="16" x2="10.4" y2="6"/>
+                  <line x1="11" y1="30" x2="4.1" y2="11.3"/>
+                  <line x1="-11" y1="30" x2="-4.1" y2="11.3"/>
+                  <line x1="-27.7" y1="16" x2="-10.4" y2="6"/>
+                  <line x1="-31.5" y1="-5.6" x2="-11.8" y2="-2.1"/>
+                  <line x1="-20.6" y1="-24.6" x2="-7.7" y2="-9.2"/>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <div class="name">Oba</div>
+              <div class="title-sub">THE SOVEREIGN</div>
+              <div class="ability">SEIZES 3 COWRIES<br>BLOCKS FOREIGN AID</div>
+            </div>
+            <div class="foot"><span>M-77 · Σ</span><span>SEAL · ADJEI</span></div>
+          </div>
+          <div class="role-card">
+            <div class="holo-strip" style="background: repeating-linear-gradient(0deg, #ef7c5a 0, #ffffff 2px, #e05a34 4px, #7a1d12 6px, #ef7c5a 8px);"></div>
+            <div class="head" style="color: var(--verm-300);"><span>OP · 008 / 15</span><span>◐ × 3</span></div>
+            <div class="sigil">
+              <svg viewBox="-40 -40 80 80" width="88" height="88">
+                <g stroke="#e05a34" stroke-width="1.5" fill="none" stroke-linecap="round">
+                  <path d="M -26 -24 L 0 22 L 26 -24"/>
+                  <path d="M -16 -24 L 0 8 L 16 -24"/>
+                  <line x1="-30" y1="-28" x2="30" y2="-28" stroke-width="1"/>
+                  <circle cx="0" cy="-28" r="2" fill="#e05a34"/>
+                </g>
+              </svg>
+            </div>
+            <div>
+              <div class="name" style="color: var(--verm-300);">Njala</div>
+              <div class="title-sub" style="color: var(--verm-300);">THE FAMINE</div>
+              <div class="ability">STRIKES FOR 3 COWRIES<br>COSTS ONE FACE</div>
+            </div>
+            <div class="foot" style="color: var(--verm-300); opacity: 0.7;"><span>M-82 · ⌇</span><span>SEAL · OKONKWO</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">House slot — lobby row</div>
+        <div style="display: grid; gap: 10px;">
+          <div class="house-slot">
+            <div class="avatar">Ω</div>
+            <div style="flex: 1;"><div class="name">HOUSE ADJEI</div><div class="meta">SEATED · ROUND 04 · ◐ 07</div></div>
+            <div class="seat"><span class="pulse"></span><span class="txt">THE SEAT</span></div>
+          </div>
+          <div class="house-slot">
+            <div class="avatar" style="background: linear-gradient(135deg, var(--indigo-700), var(--clay-900)); color: var(--indigo-200);">Ψ</div>
+            <div style="flex: 1;"><div class="name">HOUSE OKONKWO</div><div class="meta">2 FACES · ◐ 03</div></div>
+            <span class="chip-v chip-verm">ACCUSED</span>
+          </div>
+          <div class="house-slot" style="opacity: 0.5;">
+            <div class="avatar" style="border-color: var(--indigo-700); color: var(--indigo-300); background: rgba(13,18,48,0.4);">Ξ</div>
+            <div style="flex: 1;"><div class="name">HOUSE DIALLO</div><div class="meta">UNSEATED · ROUND 03</div></div>
+            <span class="chip-v" style="background: transparent; color: var(--indigo-300); border: 1px dashed var(--indigo-300);">◯ FORFEIT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="block" style="margin-bottom: 24px;">
+        <div class="eyebrow">Actions — declarative verbs</div>
+        <div class="row"><div class="label-mini">DECLARE</div>
+          <button class="action-btn seize">◐ SEIZE REVENUE</button>
+          <button class="action-btn">◐ INCOME</button>
+        </div>
+        <div class="row"><div class="label-mini">HOSTILE</div>
+          <button class="action-btn strike">⌇ DECLARE STRIKE</button>
+          <button class="action-btn strike">⚊ COUP · 7</button>
+        </div>
+        <div class="row"><div class="label-mini">DEFENSIVE</div>
+          <button class="action-btn block">☾ BLOCK · IYA</button>
+          <button class="action-btn accuse">✕ ACCUSE</button>
+        </div>
+        <div class="row"><div class="label-mini">CHROME</div>
+          <button class="btn btn-primary">CONTINUE</button>
+          <button class="btn">REVIEW</button>
+          <button class="btn btn-ghost">DISMISS</button>
+        </div>
+      </div>
+
+      <div class="block" style="margin-bottom: 24px;">
+        <div class="eyebrow">Cowries · chips · seats</div>
+        <div class="row">
+          <div class="cowries"><span class="symbol"></span>07</div>
+          <div class="cowries" style="color: var(--star-gold); border-color: var(--star-gold);"><span class="symbol" style="background: radial-gradient(circle at 35% 30%, #f7e1a8, #e8d28a 50%, #8a4a10 85%);"></span>12 · SEIZE</div>
+          <div class="cowries" style="color: var(--verm-300); border-color: var(--verm-500);"><span class="symbol"></span>00 · SPENT</div>
+        </div>
+        <div class="row">
+          <span class="chip-v chip-sun">SEATED</span>
+          <span class="chip-v chip-verm">ACCUSED</span>
+          <span class="chip-v chip-cel">BLOCKED</span>
+          <span class="chip-v chip-brass">REVEAL</span>
+        </div>
+      </div>
+
+      <div class="block" style="margin-bottom: 24px;">
+        <div class="eyebrow">Input · search · seat code</div>
+        <div class="row">
+          <div class="field"><span style="color: var(--indigo-300);">⌕</span><span>HOUSE NAME<span class="caret"></span></span></div>
+        </div>
+        <div class="row">
+          <div class="field" style="min-width: 180px;"><span style="color: var(--lapis-300);">⊞</span><span>COURT-CODE</span><span style="color: var(--indigo-300); opacity: 0.7; margin-left: auto;">USU·4K2·9</span></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">Toasts — court scribe</div>
+        <div class="row" style="flex-direction: column; align-items: stretch;">
+          <div class="toast" style="margin-bottom: 10px;"><span class="dot"></span>HOUSE ADJEI SEIZED · ◐ +3<span class="time">03:42</span></div>
+          <div class="toast verm" style="margin-bottom: 10px;"><span class="dot"></span>HOUSE OKONKWO RECANTED — ONE FACE FORFEIT<span class="time">03:48</span></div>
+          <div class="toast cel"><span class="dot"></span>HOUSE DIALLO BLOCKED · IYA UPHELD<span class="time">03:51</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

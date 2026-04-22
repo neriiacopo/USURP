@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" fill="none">
+  
+
+  
+  <g transform="translate(60 60)" stroke="#e1b968" stroke-width="1.5" fill="none" stroke-linecap="square">
+    <circle cx="0" cy="0" r="32" opacity="0.25"></circle>
+    <circle cx="0" cy="0" r="5" fill="#e1b968"></circle>
+    <line x1="0" y1="-32" x2="0" y2="-12"></line>
+    <line x1="20.6" y1="-24.6" x2="7.7" y2="-9.2"></line>
+    <line x1="31.5" y1="-5.6" x2="11.8" y2="-2.1"></line>
+    <line x1="27.7" y1="16" x2="10.4" y2="6"></line>
+    <line x1="11" y1="30" x2="4.1" y2="11.3"></line>
+    <line x1="-11" y1="30" x2="-4.1" y2="11.3"></line>
+    <line x1="-27.7" y1="16" x2="-10.4" y2="6"></line>
+    <line x1="-31.5" y1="-5.6" x2="-11.8" y2="-2.1"></line>
+    <line x1="-20.6" y1="-24.6" x2="-7.7" y2="-9.2"></line>
+  </g>
+  <text x="60" y="110" text-anchor="middle" fill="#d4c4a8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" letter-spacing="3">OBA</text>
+
+  
+  <g transform="translate(180 60)" stroke="#e05a34" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="miter">
+    <path d="M -26 -24 L 0 22 L 26 -24"></path>
+    <path d="M -16 -24 L 0 8 L 16 -24"></path>
+    <line x1="-30" y1="-28" x2="30" y2="-28" stroke-width="1"></line>
+    <circle cx="0" cy="-28" r="2" fill="#e05a34"></circle>
+    <line x1="0" y1="22" x2="0" y2="32" stroke-width="1"></line>
+  </g>
+  <text x="180" y="110" text-anchor="middle" fill="#d4c4a8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" letter-spacing="3">NJALA</text>
+
+  
+  <g transform="translate(300 60)" stroke="#72bfaf" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <path d="M -24 -22 Q -24 6 -4 10 L 16 10"></path>
+    <path d="M 24 -22 Q 24 6 4 10 L -16 10"></path>
+    <circle cx="-24" cy="-22" r="3" fill="#72bfaf"></circle>
+    <circle cx="24" cy="-22" r="3" fill="#72bfaf"></circle>
+    <circle cx="0" cy="10" r="3"></circle>
+    <line x1="0" y1="13" x2="0" y2="28" stroke-width="1"></line>
+  </g>
+  <text x="300" y="110" text-anchor="middle" fill="#d4c4a8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" letter-spacing="3">KORO</text>
+
+  
+  <g transform="translate(420 60)" stroke="#7d8ed8" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <circle cx="0" cy="0" r="28" opacity="0.3"></circle>
+    <circle cx="0" cy="0" r="22"></circle>
+    <path d="M 0 -16 A 16 16 0 1 1 -11 11 A 10 10 0 1 0 8 4 A 6 6 0 1 1 -1 -2"></path>
+    <circle cx="-1" cy="-2" r="1.5" fill="#7d8ed8"></circle>
+  </g>
+  <text x="420" y="110" text-anchor="middle" fill="#d4c4a8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" letter-spacing="3">GRIOT</text>
+
+  
+  <g transform="translate(540 60)" stroke="#f3b85c" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <path d="M -22 -8 A 14 14 0 0 0 -8 6"></path>
+    <path d="M 22 -8 A 14 14 0 0 1 8 6"></path>
+    <path d="M -14 16 A 14 14 0 0 0 14 16"></path>
+    <circle cx="0" cy="-20" r="4"></circle>
+    <line x1="0" y1="-16" x2="0" y2="-8" stroke-width="1"></line>
+  </g>
+  <text x="540" y="110" text-anchor="middle" fill="#d4c4a8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600" letter-spacing="3">IYA</text>
+</svg>

@@ -1,0 +1,365 @@
+/* ============================================================
+   USURP — Core Tokens
+   Afrofuturist clan-warfare game. Warm-earthen + ritual terminal.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- COLOR: Earth ---------- */
+  --clay-900: #1a0e07;      /* night soil — deepest bg */
+  --clay-850: #221308;
+  --clay-800: #2a180b;      /* primary surface */
+  --clay-700: #3a1f0e;
+  --clay-600: #4d2912;
+  --clay-500: #6b3a1e;      /* mid umber */
+  --clay-400: #8b5234;
+  --clay-300: #a86b47;
+  --clay-200: #c78a65;
+  --clay-100: #e4b08a;
+  --clay-50:  #f3dcc2;
+
+  /* ---------- COLOR: Accent — Solar ---------- */
+  --sun-900: #3d2106;
+  --sun-700: #8a4a10;
+  --sun-500: #d98324;       /* ochre primary */
+  --sun-400: #e89d3c;
+  --sun-300: #f3b85c;
+  --sun-200: #f8cd82;
+  --sun-100: #fce3b0;
+
+  /* ---------- COLOR: Accent — Vermilion (action/blood) ---------- */
+  --verm-700: #7a1d12;
+  --verm-500: #c93d1f;
+  --verm-400: #e05a34;
+  --verm-300: #ef7c5a;
+
+  /* ---------- COLOR: Accent — Celadon (cool counter) ---------- */
+  --cel-700: #1e4d47;
+  --cel-500: #3e8a7a;
+  --cel-300: #72bfaf;
+  --cel-100: #bde3d7;
+
+  /* ---------- COLOR: Night Sky — expanded ---------- */
+  --indigo-950: #060a1e;     /* deepest void */
+  --indigo-900: #0d1230;     /* night soil of the sky */
+  --indigo-800: #141a44;
+  --indigo-700: #1e2a6b;
+  --indigo-600: #2a3a8e;
+  --indigo-500: #3b4fb0;
+  --indigo-400: #5a6fcc;
+  --indigo-300: #7d8ed8;
+  --indigo-200: #a6b5e8;
+  --indigo-100: #d2dcf4;
+
+  /* Cool blue-brass for constellations */
+  --lapis-700:  #1a3a7a;
+  --lapis-500:  #2e5fb8;
+  --lapis-300:  #6e9ae0;
+  --star-gold:  #e8d28a;     /* warm-white star point */
+  --star-blue:  #b8cfff;     /* cool star point */
+
+  /* ---------- COLOR: Metal ---------- */
+  --brass-900: #3d2a05;
+  --brass-500: #b5863a;
+  --brass-300: #e1b968;
+  --brass-100: #f7e1a8;
+
+  /* ---------- COLOR: Parchment / text on dark ---------- */
+  --bone-500: #d4c4a8;
+  --bone-300: #e8dcc0;
+  --bone-100: #f5edd8;
+
+  /* ---------- Semantic ---------- */
+  /* Base bg is now a warm-cool blend: clay ground, indigo sky above */
+  --bg: #0b0a18;                    /* night-earth — clay × indigo */
+  --bg-raised: var(--clay-800);
+  --bg-sunken: #070518;
+  --surface: var(--clay-700);
+  --surface-hi: var(--clay-600);
+  --ink: var(--bone-100);
+  --ink-dim: var(--bone-500);
+  --ink-faint: #7a6a50;
+  --hairline: rgba(166, 181, 232, 0.12);
+  --hairline-strong: rgba(184, 207, 255, 0.28);
+  --hairline-brass: rgba(229, 193, 143, 0.32);
+  --accent: var(--sun-500);
+  --accent-hot: var(--verm-500);
+  --accent-cool: var(--cel-500);
+  --gold: var(--brass-500);
+
+  /* ---------- TYPE ---------- */
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-ui: 'Space Grotesk', system-ui, sans-serif;
+
+  /* ---------- RADIUS ---------- */
+  --r-0: 0px;
+  --r-xs: 2px;
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-xl: 18px;
+  --r-card: 14px;
+
+  /* ---------- SPACING ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ---------- SHADOW ---------- */
+  --shadow-sm: 0 1px 0 rgba(255,220,170,0.04), 0 2px 4px rgba(0,0,0,0.4);
+  --shadow-md: 0 1px 0 rgba(255,220,170,0.05), 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 1px 0 rgba(255,220,170,0.06), 0 24px 60px rgba(0,0,0,0.7);
+  --glow-sun: 0 0 24px rgba(217, 131, 36, 0.35), 0 0 2px rgba(243, 184, 92, 0.8);
+  --glow-verm: 0 0 28px rgba(201, 61, 31, 0.45), 0 0 2px rgba(239, 124, 90, 0.8);
+  --glow-cel: 0 0 22px rgba(62, 138, 122, 0.35);
+  --glow-brass: 0 0 18px rgba(181, 134, 58, 0.4);
+  --glow-indigo: 0 0 28px rgba(125, 142, 216, 0.4), 0 0 2px rgba(184, 207, 255, 0.7);
+  --glow-lapis: 0 0 22px rgba(46, 95, 184, 0.4);
+
+  /* ---------- MOTION ---------- */
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --ease-ritual: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Base ---------- */
+html, body {
+  background:
+    radial-gradient(ellipse 1200px 800px at 50% -10%, rgba(30, 42, 107, 0.55), transparent 60%),
+    radial-gradient(ellipse 900px 700px at 90% 100%, rgba(13, 18, 48, 0.5), transparent 55%),
+    #0b0a18;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-feature-settings: "ss02", "cv11", "zero";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Type classes ---------- */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+}
+.t-wordmark {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "ss02", "zero", "cv11";
+}
+.t-ui {
+  font-family: var(--font-ui);
+}
+.t-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Ritual / scanner line ---------- */
+.scanlines {
+  position: relative;
+}
+.scanlines::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(229,193,143,0) 0px,
+    rgba(229,193,143,0) 2px,
+    rgba(10,5,2,0.18) 3px,
+    rgba(229,193,143,0) 4px
+  );
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Noise ---------- */
+.grain::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.9  0 0 0 0 0.75  0 0 0 0 0.5  0 0 0 0.12 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.45;
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Hairlines ---------- */
+.rule-x {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hairline-strong), transparent);
+}
+.rule-y {
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--hairline-strong), transparent);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all .18s var(--ease-snap);
+  display: inline-flex; align-items: center; gap: 10px;
+  position: relative;
+}
+.btn:hover { border-color: var(--sun-300); color: var(--sun-100); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--sun-400), var(--sun-500));
+  color: #2a1605;
+  border: 1px solid var(--sun-300);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.5);
+}
+.btn-primary:hover { filter: brightness(1.08); color: #1a0d02; }
+.btn-danger {
+  background: linear-gradient(180deg, var(--verm-400), var(--verm-500));
+  color: #fff1ea;
+  border: 1px solid var(--verm-300);
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px dashed var(--hairline-strong);
+  color: var(--ink-dim);
+}
+.btn-ghost:hover { color: var(--sun-200); border-color: var(--sun-300); }
+
+/* ---------- Chip / tag ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: rgba(217,131,36,0.12);
+  color: var(--sun-200);
+  border: 1px solid rgba(217,131,36,0.3);
+}
+.chip::before {
+  content: ""; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--sun-400); box-shadow: 0 0 6px var(--sun-400);
+}
+
+/* ---------- Panel ---------- */
+.panel {
+  background: linear-gradient(180deg, #13142c, #0c0a1c);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(1200px 300px at 50% -20%, rgba(125,142,216,0.10), transparent 60%),
+    radial-gradient(600px 200px at 80% 100%, rgba(217,131,36,0.06), transparent 60%);
+  pointer-events: none;
+}
+
+/* Star-field backdrop — subtle twinkle */
+.starfield {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 24%, #d2dcf4 50%, transparent 100%),
+    radial-gradient(1px 1px at 28% 62%, #e8d28a 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 44% 18%, #b8cfff 50%, transparent 100%),
+    radial-gradient(1px 1px at 62% 78%, #d2dcf4 50%, transparent 100%),
+    radial-gradient(1px 1px at 78% 32%, #e8d28a 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 88% 70%, #b8cfff 50%, transparent 100%),
+    radial-gradient(1px 1px at 8% 88%, #d2dcf4 50%, transparent 100%),
+    radial-gradient(1px 1px at 52% 48%, #e8d28a 50%, transparent 100%),
+    radial-gradient(1px 1px at 92% 12%, #b8cfff 50%, transparent 100%);
+  background-size: 100% 100%;
+  opacity: 0.55;
+  animation: twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0% { opacity: 0.4; } 100% { opacity: 0.75; } }
+
+/* ---------- Corner brackets (ritual frame) ---------- */
+.brackets {
+  position: relative;
+}
+.brackets::before,
+.brackets::after,
+.brackets > .bk-a,
+.brackets > .bk-b {
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: var(--indigo-300);
+  border-style: solid;
+  border-width: 0;
+}
+.brackets::before { top: 6px;    left: 6px;    border-top-width: 1px;    border-left-width: 1px;  }
+.brackets::after  { top: 6px;    right: 6px;   border-top-width: 1px;    border-right-width: 1px; }
+.brackets > .bk-a { bottom: 6px; left: 6px;    border-bottom-width: 1px; border-left-width: 1px;  }
+.brackets > .bk-b { bottom: 6px; right: 6px;   border-bottom-width: 1px; border-right-width: 1px; }
+
+/* ---------- Holo strip ---------- */
+.holo {
+  background:
+    repeating-linear-gradient(105deg,
+      rgba(243,184,92,0.35) 0px,
+      rgba(255,255,255,0.5) 2px,
+      rgba(62,138,122,0.4) 4px,
+      rgba(201,61,31,0.35) 6px,
+      rgba(243,184,92,0.35) 8px);
+  background-size: 200% 100%;
+  filter: saturate(1.3);
+  animation: holoShift 6s linear infinite;
+}
+@keyframes holoShift { from { background-position: 0 0; } to { background-position: 200% 0; } }
+
+/* ---------- Coin ---------- */
+.cowrie {
+  width: 18px; height: 18px; border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #fce3b0 0%, #e1b968 35%, #8a6225 75%, #3d2a05 100%);
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.6);
+  position: relative;
+}
+.cowrie::after {
+  content: ""; position: absolute;
+  left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 40%; height: 70%; border-radius: 50%;
+  background: linear-gradient(90deg, transparent 45%, rgba(61,42,5,0.7) 50%, transparent 55%);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-sunken); }
+::-webkit-scrollbar-thumb { background: var(--clay-600); border-radius: 5px; border: 2px solid var(--bg-sunken); }
+::-webkit-scrollbar-thumb:hover { background: var(--sun-700); }
