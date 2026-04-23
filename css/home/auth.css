@@ -1,0 +1,163 @@
+/* ============================================================
+   USURP — Auth card
+   Scheda login fluttuante.
+   Estratto da home.css (righe 305-461)
+   ============================================================ */
+
+/* ─── AUTH CARD ──────────────────────────────────────────── */
+.auth-card {
+    width: min(460px, 33vw);
+    min-width: 380px;
+    padding: 44px 40px 36px;
+    display: flex;
+    flex-direction: column;
+}
+.auth-card .auth-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--lapis-300);
+    margin-bottom: 14px;
+    text-align: center;
+}
+.auth-card .auth-h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--indigo-100);
+    margin: 0 0 30px;
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+.auth-card .auth-h2 em {
+    color: var(--lapis-300);
+}
+
+.auth-card .fld {
+    margin-bottom: 18px;
+}
+.auth-card .fld .lab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--indigo-300);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+.auth-card .fld .faint {
+    color: var(--ink-faint);
+}
+.auth-card .fld input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    outline: none;
+    transition:
+        border 0.18s,
+        box-shadow 0.18s;
+}
+.auth-card .fld input:focus {
+    border-color: var(--lapis-300);
+    box-shadow: 0 0 0 3px rgba(125, 142, 216, 0.22);
+}
+
+.auth-card .auth-enter {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 18px;
+    font-size: 12px;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+.auth-card .auth-enter .arr {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 1px 6px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    opacity: 0.7;
+}
+
+.auth-card .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0 16px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: var(--indigo-300);
+    text-transform: uppercase;
+}
+.auth-card .auth-divider .line {
+    flex: 1;
+    height: 1px;
+    background: var(--hairline-strong);
+}
+.auth-card .auth-ghost {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 18px;
+}
+
+.auth-card .auth-footnote {
+    margin-top: 26px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-align: center;
+    text-transform: uppercase;
+}
+.auth-card .auth-footnote .amber {
+    color: var(--sun-300);
+}
+
+.auth-card .auth-enter-hint {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--indigo-300);
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+/* brackets */
+.floater .bk-a,
+.floater .bk-b {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--brass-300);
+    opacity: 0.5;
+    pointer-events: none;
+}
+.floater .bk-a {
+    top: 10px;
+    left: 10px;
+    border-right: none;
+    border-bottom: none;
+}
+.floater .bk-b {
+    bottom: 10px;
+    right: 10px;
+    border-left: none;
+    border-top: none;
+}
+

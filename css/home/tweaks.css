@@ -1,0 +1,169 @@
+/* ============================================================
+   USURP — Dev panels
+   Tweaks panel (slider timing) + phase strip (dev nav).
+   Estratto da home.css (righe 835-997)
+   ============================================================ */
+
+/* ─── TWEAKS PANEL ───────────────────────────────────────── */
+.tweaks-panel {
+    position: fixed;
+    bottom: 68px;
+    right: 20px;
+    width: 300px;
+    background: rgba(6, 9, 24, 0.94);
+    border: 1px solid var(--lapis-500);
+    border-radius: var(--r-md);
+    padding: 18px 18px 16px;
+    z-index: 220;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(125, 142, 216, 0.1);
+    backdrop-filter: blur(12px);
+    display: none;
+}
+.tweaks-panel.open {
+    display: block;
+}
+.tweaks-head {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--lapis-300);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(125, 142, 216, 0.2);
+    padding-bottom: 10px;
+}
+.tweaks-head .close {
+    background: transparent;
+    border: 1px solid var(--hairline-strong);
+    color: var(--indigo-300);
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.tweaks-row {
+    margin-bottom: 14px;
+}
+.tweaks-row .lab {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--indigo-300);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+}
+.tweaks-row .lab .v {
+    color: var(--sun-300);
+}
+.tweaks-row input[type="range"] {
+    width: 100%;
+    accent-color: var(--lapis-300);
+}
+.tweaks-row .vals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 4px;
+}
+.tweaks-row .vals button {
+    padding: 7px 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--indigo-300);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+}
+.tweaks-row .vals button:hover {
+    color: var(--indigo-100);
+}
+.tweaks-row .vals button.active {
+    background: var(--lapis-500);
+    color: #0a0e22;
+    border-color: var(--lapis-300);
+    box-shadow: 0 0 10px rgba(125, 142, 216, 0.3);
+}
+.tweaks-row .action {
+    width: 100%;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    background: rgba(125, 142, 216, 0.12);
+    border: 1px solid var(--lapis-500);
+    color: var(--lapis-300);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.tweaks-row .action:hover {
+    background: rgba(125, 142, 216, 0.24);
+    color: var(--indigo-100);
+}
+
+/* ─── PHASE STRIP (dev nav) ──────────────────────────────── */
+.phase-strip {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+    background: rgba(6, 9, 24, 0.8);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 3px;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+    align-items: center;
+}
+.phase-strip .ps-btn {
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--indigo-300);
+    cursor: pointer;
+    border-radius: 2px;
+    background: transparent;
+    border: none;
+    transition: all 0.15s;
+}
+.phase-strip .ps-btn:hover {
+    color: var(--indigo-100);
+}
+.phase-strip .ps-btn.active {
+    background: var(--lapis-500);
+    color: #0a0e22;
+    box-shadow: 0 0 10px rgba(125, 142, 216, 0.4);
+}
+.phase-strip .ps-hint {
+    padding: 8px 10px 8px 14px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.28em;
+    color: var(--ink-faint);
+    border-left: 1px solid var(--hairline);
+    margin-left: 4px;
+    text-transform: uppercase;
+}
+

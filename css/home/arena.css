@@ -1,0 +1,244 @@
+/* ============================================================
+   USURP — Arena layout
+   Layout radiale degli avversari attorno al tavolo,
+   highlight del giocatore attivo, targetable, dead.
+   Estratto da home.css (righe 1327-1545)
+   ============================================================ */
+
+/* ─── RADIAL OPPONENT LAYOUT ─────────────────────────────
+   Place the 5 foes on a circle outside the orbit rings,
+   distributed across the upper 240° of the arena so the
+   player's rack owns the bottom.
+*/
+.stage-court .table-arena .opp {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 160px;
+    /* each variant sets --r (radius) and --a (angle in deg) */
+    transform: translate(-50%, -50%) rotate(var(--a))
+        translateY(calc(var(--r) * -1)) rotate(calc(var(--a) * -1));
+    transition: transform 0.4s var(--ease-spring, ease);
+}
+/* Angles: 0° = top, clockwise. Spread 5 foes across upper arc.
+   Top foe is pulled inward (down), side foes pushed outward (away from sun). */
+.stage-court .table-arena .opp.tl {
+    --r: 300px;
+    --a: -68deg;
+}
+.stage-court .table-arena .opp.top {
+    --r: 285px;
+    --a: 0deg;
+}
+.stage-court .table-arena .opp.tr {
+    --r: 300px;
+    --a: 68deg;
+}
+.stage-court .table-arena .opp.left {
+    --r: 330px;
+    --a: -118deg;
+}
+.stage-court .table-arena .opp.right {
+    --r: 330px;
+    --a: 118deg;
+}
+
+/* Small rotation hint for side opponents for radial feel */
+.stage-court .table-arena .opp.tl .opp-cards,
+.stage-court .table-arena .opp.tr .opp-cards {
+    transform: rotate(0deg);
+}
+.stage-court .table-arena .opp.left {
+    transform: translate(-50%, -50%) rotate(-118deg) translateY(calc(-330px))
+        rotate(118deg);
+}
+.stage-court .table-arena .opp.right {
+    transform: translate(-50%, -50%) rotate(118deg) translateY(calc(-330px))
+        rotate(-118deg);
+}
+
+/* Ensure arena children are above background layers.
+   IMPORTANT: do NOT set `position: relative` here. Many direct children
+   of `.table-arena` rely on `position: absolute` from their own rules
+   (specificity 0,1,0 in prototype.css — e.g. .reserve, .round-label,
+   .turn-banner, .action-banner, .coin-fly-layer, and .orbit-layer from
+   atmosphere.css). A universal `> *` selector (0,2,0) would override
+   those and force the 720x720 orbit-layer and everything else into
+   block flow, pushing visible content (scribe, round-label, FX) to
+   the bottom of the page. Only z-index is safe to apply universally. */
+.stage-court .table-arena > * {
+    z-index: 2;
+}
+.stage-court .table-arena .sky-layer,
+.stage-court .table-arena .sky-motes,
+.stage-court .table-arena .arena-depth,
+.stage-court .table-arena .orbit-layer {
+    z-index: 1;
+}
+/* Re-assert the reserve's absolute centering: the universal
+   `.stage-court .table-arena > *` rule above forces position:relative
+   on every direct child, which would break `.reserve`'s centered
+   offset (prototype.css, specificity 0,1,0 — loses to 0,2,0 here).
+   Every other arena child (sky-layer, orbit-layer, opp…) already
+   re-asserts its own absolute positioning at higher specificity. */
+.stage-court .table-arena .reserve {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+.stage-court .table-arena .opp {
+    z-index: 4;
+}
+/* Note: .hand-rack is a SIBLING of .table-arena (both children of
+   .table-stage), so a `.table-arena .hand-rack` selector would never
+   match. The hand-rack's own absolute positioning comes from
+   prototype.css. */
+.stage-court .table-arena .coin-fly-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+}
+.stage-court .table-arena .action-banner,
+.stage-court .table-arena .challenge-window {
+    z-index: 8;
+}
+.stage-court .table-arena .fx-flash {
+    z-index: 15;
+}
+
+/* ════════════════════════════════════════════════════════
+   TURN LOGIC — active player highlight
+   ════════════════════════════════════════════════════════ */
+.stage-court .table-arena .opp.is-turn .mini-card:not(.forfeit) {
+    border-color: var(--star-gold);
+    box-shadow: 0 0 18px rgba(232, 210, 138, 0.55);
+    animation: turnCardPulse 2.4s ease-in-out infinite;
+}
+.stage-court .table-arena .opp.is-turn .opp-name {
+    color: var(--star-gold);
+}
+.stage-court .table-arena .opp.is-turn::before {
+    content: "· IN SEAT ·";
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.28em;
+    color: var(--star-gold);
+    font-weight: 700;
+    white-space: nowrap;
+    animation: inSeatBreathe 2.4s ease-in-out infinite;
+}
+@keyframes turnCardPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 14px rgba(232, 210, 138, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 26px rgba(232, 210, 138, 0.8);
+    }
+}
+@keyframes inSeatBreathe {
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* YOU are the active player — glow your hand */
+.hand-cards.is-turn .player-card:not(.forfeit) {
+    border-color: var(--star-gold);
+    box-shadow:
+        0 0 32px rgba(232, 210, 138, 0.5),
+        var(--shadow-md);
+}
+.hand-cards.is-turn .player-card:nth-child(1) {
+    animation: handBreatheA 3.2s ease-in-out infinite;
+}
+.hand-cards.is-turn .player-card:nth-child(2) {
+    animation: handBreatheB 3.2s ease-in-out infinite;
+    animation-delay: 0.4s;
+}
+@keyframes handBreatheA {
+    0%,
+    100% {
+        transform: rotate(-2deg) translateY(0);
+    }
+    50% {
+        transform: rotate(-2deg) translateY(-6px);
+    }
+}
+@keyframes handBreatheB {
+    0%,
+    100% {
+        transform: rotate(2deg) translateY(0);
+    }
+    50% {
+        transform: rotate(2deg) translateY(-6px);
+    }
+}
+
+/* Dim non-active opponents a touch */
+.stage-court .table-arena .opp.dim {
+    opacity: 0.72;
+    filter: saturate(0.85);
+}
+.stage-court .table-arena .opp.dim .opp-name {
+    color: var(--indigo-300);
+}
+
+/* Dead (fully unseated) opponent */
+.stage-court .table-arena .opp.dead {
+    opacity: 0.32;
+    filter: grayscale(0.7) saturate(0.4);
+}
+.stage-court .table-arena .opp.dead::after {
+    content: "· UNSEATED ·";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-10deg);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: var(--verm-400);
+    padding: 4px 10px;
+    border: 1px solid var(--verm-400);
+    white-space: nowrap;
+    background: rgba(6, 9, 24, 0.8);
+}
+
+/* Targetable (for hostile actions) */
+.stage-court .table-arena .opp.targetable {
+    cursor: pointer;
+}
+.stage-court .table-arena .opp.targetable .mini-card:not(.forfeit) {
+    border-color: var(--verm-300);
+    box-shadow: 0 0 18px rgba(239, 124, 90, 0.55);
+    animation: targetPulse 1.2s ease-in-out infinite;
+}
+.stage-court .table-arena .opp.targetable .opp-name {
+    color: var(--verm-300);
+}
+.stage-court .table-arena .opp.targetable:hover {
+    transform: scale(1.06) translate(-50%, -50%) rotate(var(--a))
+        translateY(calc(var(--r) * -1)) rotate(calc(var(--a) * -1));
+}
+@keyframes targetPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 12px rgba(239, 124, 90, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 28px rgba(239, 124, 90, 0.9);
+    }
+}
+

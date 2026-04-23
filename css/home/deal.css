@@ -1,0 +1,96 @@
+/* ============================================================
+   USURP — Deal animation
+   Distribuzione delle carte all'inizio della partita: le carte
+   volano dal centro (sun-pile) verso le mani degli avversari
+   e del giocatore, con stagger e morph di scala.
+   Il dim del sole vive in sun.css (modulo dedicato).
+   ============================================================ */
+
+/* ─── DEAL ANIMATION ─────────────────────────────────────── */
+/* Scoped under `.stage-court .table-arena` so this selector's
+   specificity (0,3,0) wins against the universal
+   `.stage-court .table-arena > *` rule in arena.css (0,2,0),
+   which would otherwise force position:relative + z-index:2 and
+   make the deal layer collapse into the flow behind the opponents.
+   Same trap that was fixed for `.reserve`. */
+.stage-court .table-arena .deal-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+.deal-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 4px;
+    background: linear-gradient(135deg, #1e2a6b, #0d1230);
+    border: 1px solid var(--lapis-300);
+    box-shadow:
+        0 0 18px rgba(125, 142, 216, 0.4),
+        0 6px 18px rgba(0, 0, 0, 0.5);
+    transform: translate(
+            calc(var(--sx) - var(--w) / 2),
+            calc(var(--sy) - var(--h) / 2)
+        )
+        scale(0.3);
+    opacity: 0;
+    animation: dealFly var(--dur) cubic-bezier(0.2, 0.8, 0.2, 1) var(--delay)
+        forwards;
+    will-change: transform, opacity;
+}
+.deal-card::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(229, 193, 143, 0.45);
+    border-radius: 2px;
+}
+.deal-card.deal-player {
+    box-shadow:
+        0 0 26px rgba(243, 184, 92, 0.45),
+        0 10px 28px rgba(0, 0, 0, 0.55);
+    border-color: var(--brass-300);
+}
+@keyframes dealFly {
+    0% {
+        transform: translate(
+                calc(var(--sx) - var(--w) / 2),
+                calc(var(--sy) - var(--h) / 2)
+            )
+            scale(0.25) rotate(-10deg);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    12% {
+        opacity: 1;
+        filter: blur(0);
+    }
+    75% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(
+                calc(var(--tx) - var(--w) / 2),
+                calc(var(--ty) - var(--h) / 2)
+            )
+            scale(1) rotate(0deg);
+        opacity: 0;
+        filter: blur(0);
+    }
+}
+
+/* Hide real cards while the deal overlay is running */
+.table-stage[data-dealing="true"] .opp-cards .mini-card,
+.table-stage[data-dealing="true"] .hand-cards .player-card {
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+}
+.table-stage[data-dealing="false"] .opp-cards .mini-card,
+.table-stage[data-dealing="false"] .hand-cards .player-card {
+    opacity: 1;
+    transition: opacity 400ms ease-in 120ms;
+}
+

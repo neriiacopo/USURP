@@ -1,0 +1,80 @@
+/* ============================================================
+   USURP — Sun (the reserve pile) · turn-long dimming
+   ============================================================
+   Il sole al centro della table-arena è `.reserve .sun-pile`.
+   Durante ogni turno, `TableScreen` calcola
+     --sun-intensity : 1   → 1 − sunDimDepth  (sempre > 0)
+     --turn-progress : 0   → 1
+   e li scrive inline su `.table-arena`.
+   Da qui usciamo quei due segnali per:
+     · abbassare l'opacità del sole (non mai a 0, resta evocativo)
+     · ridurre la saturazione e la brightness
+     · far calare il bagliore esterno (box-shadow) e l'alone radiale
+     · virare l'etichetta RESERVE dal lapis al vermiglio nell'ultimo
+       quarto del turno (--turn-flash)
+   Il tutto è interamente CSS — nessuna JS timeline.
+   ============================================================ */
+
+/* ─── Il sole: opacità + glow + saturazione legati a --sun-intensity ── */
+.table-arena .reserve .sun-pile {
+    /* Mai completamente spento: baseline 0.45 + 0.55·intensity */
+    opacity: calc(0.45 + 0.55 * var(--sun-intensity, 1));
+
+    /* Bagliore esterno che si ritira col calare del sole.
+       Il terzo strato (inset) resta per dare profondità alla brace. */
+    box-shadow:
+        0 0 calc(60px * var(--sun-intensity, 1))
+            rgba(217, 131, 36, calc(0.45 * var(--sun-intensity, 1))),
+        0 0 calc(120px * var(--sun-intensity, 1))
+            rgba(243, 184, 92, calc(0.28 * var(--sun-intensity, 1))),
+        inset 0 0 40px rgba(61, 33, 6, 0.6);
+
+    /* Saturazione e brightness scalano con intensity — il sole
+       sbiadisce verso toni freddi mentre perde forza. */
+    filter:
+        saturate(calc(0.5 + 0.6 * var(--sun-intensity, 1)))
+        brightness(calc(0.6 + 0.5 * var(--sun-intensity, 1)));
+
+    transition:
+        opacity 140ms linear,
+        filter 140ms linear,
+        box-shadow 140ms linear;
+
+    position: relative;
+}
+
+/* ─── Alone radiale: si restringe col calare del sole ── */
+.table-arena .reserve .sun-pile::after {
+    content: "";
+    position: absolute;
+    /* Inset negativo: più il sole è intenso, più l'alone si espande */
+    inset: calc(-30px - 60px * var(--sun-intensity, 1));
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(243, 184, 92, calc(0.22 * var(--sun-intensity, 1))) 0%,
+        rgba(217, 131, 36, calc(0.10 * var(--sun-intensity, 1))) 35%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: inset 200ms linear;
+}
+
+/* ─── Turn-flash: scatta solo nell'ultimo quarto del turno ──
+   Tra progress 0.75 e 1.0, --turn-flash sale linearmente 0 → 1.
+   Sotto 0.75 resta 0 (niente rosso). */
+.table-arena {
+    --turn-flash: calc(max(0, var(--turn-progress, 0) - 0.75) * 4);
+}
+
+/* Etichetta "· THE RESERVE ·" vira dal lapis al vermiglio
+   nell'ultimo quarto, per segnalare la fine del turno. */
+.table-arena .reserve .lab {
+    color: color-mix(
+        in oklab,
+        var(--lapis-300) calc(100% - var(--turn-flash, 0) * 100%),
+        var(--verm-300)
+    );
+    transition: color 200ms linear;
+}

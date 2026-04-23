@@ -1,0 +1,257 @@
+/* ============================================================
+   USURP — Lobby card
+   Layout a 3 colonne, lista corti, scribe, standing.
+   Estratto da home.css (righe 462-713)
+   ============================================================ */
+
+/* ─── LOBBY CARD ─────────────────────────────────────────── */
+.lobby-card {
+    width: 80vw;
+    max-width: 1500px;
+    max-height: 86vh;
+    padding: 28px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.lobby-card .lobby-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr 320px;
+    gap: 22px;
+    height: 100%;
+    max-height: calc(86vh - 56px);
+    overflow: hidden;
+}
+.lobby-card .lobby-aside,
+.lobby-card .lobby-main,
+.lobby-card .lobby-right {
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-card);
+    background: rgba(8, 12, 30, 0.55);
+    padding: 22px 20px;
+    overflow: auto;
+}
+.lobby-card .aside-eyebrow,
+.lobby-card .lobby-eyebrow,
+.lobby-card .right-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--lapis-300);
+    margin-bottom: 12px;
+}
+.lobby-card .aside-eyebrow {
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+}
+
+.lobby-card .aside-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--indigo-300);
+    cursor: pointer;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    transition:
+        color 0.15s,
+        border-color 0.15s,
+        background 0.15s;
+}
+.lobby-card .aside-item.active {
+    background: rgba(125, 142, 216, 0.12);
+    color: var(--indigo-100);
+    border-color: rgba(125, 142, 216, 0.3);
+}
+.lobby-card .aside-item:hover:not(.active) {
+    color: var(--ink);
+}
+.lobby-card .aside-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--indigo-300);
+}
+.lobby-card .aside-item.active .dot {
+    background: var(--lapis-300);
+    box-shadow: 0 0 6px var(--lapis-300);
+}
+
+.lobby-card .aside-divider {
+    height: 1px;
+    background: var(--hairline-strong);
+    margin: 20px 0 16px;
+}
+.lobby-card .aside-subhead {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+}
+.lobby-card .aside-stats {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    line-height: 1.8;
+    letter-spacing: 0.06em;
+}
+.lobby-card .aside-stats > div {
+    display: flex;
+    justify-content: space-between;
+}
+.lobby-card .aside-stats .amber {
+    color: var(--sun-300);
+    font-weight: 700;
+}
+.lobby-card .aside-stats .verm {
+    color: var(--verm-300);
+    font-weight: 700;
+}
+.lobby-card .aside-stats .brass {
+    color: var(--brass-300);
+    font-weight: 700;
+}
+
+.lobby-card .lobby-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+.lobby-card .lobby-header h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 36px;
+    margin: 0;
+    color: var(--indigo-100);
+    line-height: 1;
+}
+.lobby-card .lobby-actions {
+    display: flex;
+    gap: 10px;
+}
+.lobby-card .lobby-open {
+    box-shadow:
+        0 0 0 1px rgba(125, 142, 216, 0.4),
+        0 0 24px rgba(125, 142, 216, 0.25);
+    animation: openCourtPulse 3s ease-in-out infinite;
+}
+@keyframes openCourtPulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 1px rgba(125, 142, 216, 0.4),
+            0 0 24px rgba(125, 142, 216, 0.25);
+    }
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(125, 142, 216, 0.7),
+            0 0 40px rgba(125, 142, 216, 0.45);
+    }
+}
+
+.lobby-card .court-list {
+    display: grid;
+    gap: 10px;
+}
+.lobby-card .court-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 120px 120px 80px;
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+    background: rgba(6, 9, 24, 0.6);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition:
+        border-color 0.18s,
+        transform 0.18s,
+        background 0.18s;
+}
+.lobby-card .court-row:hover {
+    border-color: var(--lapis-300);
+    transform: translateX(2px);
+    background: rgba(125, 142, 216, 0.08);
+}
+.lobby-card .court-row .code {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--lapis-300);
+    letter-spacing: 0.08em;
+}
+.lobby-card .court-row .name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+}
+.lobby-card .court-row .sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--indigo-300);
+    letter-spacing: 0.16em;
+    margin-top: 2px;
+}
+.lobby-card .court-row .seats {
+    display: flex;
+    gap: 4px;
+}
+.lobby-card .court-row .seat-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--lapis-500);
+}
+.lobby-card .court-row .seat-dot.filled {
+    background: var(--lapis-300);
+    box-shadow: 0 0 6px var(--lapis-300);
+    border-color: var(--lapis-300);
+}
+.lobby-card .court-row .stake {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--lapis-300);
+    text-transform: uppercase;
+}
+
+.lobby-card .scribe-line {
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(166, 181, 232, 0.12);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+}
+.lobby-card .scribe-line .t {
+    color: var(--indigo-300);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    display: block;
+    margin-bottom: 3px;
+}
+.lobby-card .scribe-line .h {
+    color: var(--lapis-300);
+}
+.lobby-card .decree {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+}
+.lobby-card .decree .amber {
+    color: var(--sun-300);
+}

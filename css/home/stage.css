@@ -1,0 +1,243 @@
+/* ============================================================
+   USURP — Stage layer
+   Background, hero (quadrante landing), court container, nav.
+   Estratto da home.css (righe 1-237)
+   ============================================================ */
+
+/* ============================================================
+   USURP — home.html layout
+   Stages + floating cards + fade transitions
+   ============================================================ */
+
+:root {
+    --ease-ritual-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-ritual-in: cubic-bezier(0.6, 0.05, 0.7, 0.3);
+    --fade-dur: 620ms;
+    --float-dur: 720ms;
+}
+
+.home-body {
+    margin: 0;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.home-app {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* ─── STAGE (background) ──────────────────────────────────── */
+.stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* HERO — the left-quadrant graphics, scaled full-bleed.
+   Later this literal region becomes the game board. */
+.stage-hero {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        var(--indigo-950) 0%,
+        #050818 55%,
+        #02040e 100%
+    );
+    transition:
+        opacity 720ms var(--ease-ritual-out),
+        transform 720ms var(--ease-ritual-out),
+        filter 720ms var(--ease-ritual-out);
+    will-change: opacity, transform, filter;
+}
+.stage-hero.is-live {
+    opacity: 1;
+    transform: scale(1);
+    filter: none;
+}
+.stage-hero.is-gone {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.hero-stars {
+    position: absolute;
+    inset: 0;
+    background-image: url("../../assets/constellations.svg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.55;
+    mix-blend-mode: screen;
+}
+.hero-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(
+            ellipse 70% 60% at 50% 42%,
+            rgba(125, 142, 216, 0.25),
+            transparent 62%
+        ),
+        radial-gradient(
+            ellipse 100% 60% at 50% 120%,
+            rgba(6, 10, 30, 0.9),
+            transparent 55%
+        );
+    pointer-events: none;
+}
+.hero-sun-xl {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    height: 520px;
+    animation: heroSunSpin 180s linear infinite;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 60px rgba(225, 185, 104, 0.25));
+}
+@keyframes heroSunSpin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.hero-copy-xl {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 10vh;
+    text-align: center;
+    padding: 0 5vw;
+    z-index: 3;
+}
+.hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    color: var(--lapis-300);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    opacity: 0.9;
+}
+.hero-copy-xl h1 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 0.98;
+    color: var(--indigo-100);
+    margin: 0;
+    letter-spacing: -0.015em;
+    text-shadow: 0 2px 40px rgba(0, 0, 0, 0.55);
+}
+.hero-copy-xl h1 em {
+    color: var(--lapis-300);
+    font-style: italic;
+}
+.hero-tagline {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: var(--brass-300);
+    text-transform: uppercase;
+    margin-top: 22px;
+    opacity: 0.8;
+}
+
+/* ─── COURT (under hero) ──────────────────────────────────── */
+.stage-court {
+    position: absolute;
+    inset: 0;
+    padding: 72px 40px 24px;
+    transition:
+        opacity 720ms var(--ease-ritual-out),
+        transform 720ms var(--ease-ritual-out);
+    will-change: opacity, transform;
+    z-index: 1;
+}
+.stage-court.is-dormant {
+    opacity: 0;
+    transform: scale(0.985);
+    pointer-events: none;
+}
+.stage-court.is-live {
+    opacity: 1;
+    transform: scale(1);
+}
+/* TableScreen has its own chrome via prototype.css — just let it fill */
+.stage-court .table-stage {
+    height: calc(100vh - 96px);
+    min-height: 0;
+}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+.home-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 32px;
+    z-index: 30;
+    pointer-events: none;
+}
+.home-nav > * {
+    pointer-events: auto;
+}
+.home-nav .nav-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.home-nav .nav-mark .wm {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.22em;
+    color: var(--indigo-100);
+}
+.home-nav .nav-mark .sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: var(--lapis-300);
+    text-transform: uppercase;
+}
+.home-nav .nav-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    color: var(--indigo-300);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.home-nav .nav-status .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lapis-300);
+    box-shadow: 0 0 10px var(--lapis-300);
+    animation: pulseDot 1.6s ease-in-out infinite;
+    display: inline-block;
+    margin-right: 6px;
+}
+@keyframes pulseDot {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+

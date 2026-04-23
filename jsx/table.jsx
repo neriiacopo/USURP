@@ -11,35 +11,26 @@
      COUP  (Colpo)      → no block, no challenge; forced at 10+ cowries
 */
 
-const ACTION_DEFS = {
-  income:   { id: "income",   label: "INCOME",   glyph: "◐", cost: 0, gain: 1, kind: "base",    role: null,    blockableBy: [],               hostile: false, challengeable: false, targeted: false },
-  aid:      { id: "aid",      label: "AID",      glyph: "◐", cost: 0, gain: 2, kind: "base",    role: null,    blockableBy: ["OBA"],          hostile: false, challengeable: false, targeted: false },
-  seize:    { id: "seize",    label: "SEIZE",    glyph: "◐", cost: 0, gain: 3, kind: "claim",   role: "OBA",   blockableBy: [],               hostile: false, challengeable: true,  targeted: false },
-  reave:    { id: "reave",    label: "REAVE",    glyph: "⊛", cost: 0, gain: 2, kind: "claim",   role: "KORO",  blockableBy: ["KORO","GRIOT"], hostile: true,  challengeable: true,  targeted: true  },
-  exchange: { id: "exchange", label: "EXCHANGE", glyph: "⌬", cost: 0, gain: 0, kind: "claim",   role: "GRIOT", blockableBy: [],               hostile: false, challengeable: true,  targeted: false },
-  strike:   { id: "strike",   label: "STRIKE",   glyph: "⌇", cost: 3, gain: 0, kind: "hostile", role: "NJALA", blockableBy: ["IYA"],          hostile: true,  challengeable: true,  targeted: true  },
-  coup:     { id: "coup",     label: "COUP",     glyph: "⚊", cost: 7, gain: 0, kind: "hostile", role: null,    blockableBy: [],               hostile: true,  challengeable: false, targeted: true  },
-};
+/* ACTION_DEFS è ora definito in data/actions.js e disponibile su window.
+   Modifica costi/guadagni/ruoli lì, non qui. */
 
-const PlayerCard = ({ role, forfeit }) => {
-  const abilities = {
-    OBA:   { n: "Oba",   s: "THE SOVEREIGN", a: "SEIZE 3 COWRIES · BLOCK AID", code: "M-77 · Σ" },
-    NJALA: { n: "Njala", s: "THE FAMINE",    a: "STRIKE · 3 COWRIES",          code: "M-82 · ⌇" },
-    KORO:  { n: "Koro",  s: "THE REAVER",    a: "STEAL 2 COWRIES",             code: "M-64 · ⊛" },
-    GRIOT: { n: "Griot", s: "KEEPER OF NAMES",a: "EXCHANGE IDENTITY",          code: "M-55 · ⌬" },
-    IYA:   { n: "Iya",   s: "THE MOTHER",    a: "BLOCK STRIKE",                code: "M-91 · ☽" },
-  };
-  const d = abilities[role] || abilities.OBA;
-  const cls = "player-card" + (role === "NJALA" ? " njala" : "") + (forfeit ? " forfeit" : "");
+const PlayerCard = ({ role, forfeit, justForfeit }) => {
+  // I testi delle carte (nome, epiteto, abilità, codice) vivono in
+  // data/roles.js → ROLE_DEFS. Modifica lì per cambiarli.
+  const d = ROLE_DEFS[role] || ROLE_DEFS.OBA;
+  const cls = "player-card"
+    + (role === "NJALA" ? " njala" : "")
+    + (forfeit ? " forfeit" : "")
+    + (justForfeit ? " just-forfeit" : "");
   return (
     <div className={cls}>
       <div className="holo-strip" style={role === "NJALA" ? { background: "repeating-linear-gradient(0deg, #ef7c5a 0, #fff 2px, #e05a34 4px, #7a1d12 6px, #ef7c5a 8px)", backgroundSize:'100% 200%'} : {}}/>
       <div className="head"><span>OP · {d.code.split(' ')[0]}</span><span>◐ × 3</span></div>
       <div className="sigil-wrap"><Sigil name={role} size={70} /></div>
       <div>
-        <div className="name">{d.n}</div>
-        <div className="sub">{d.s}</div>
-        <div className="ab">{d.a}</div>
+        <div className="name">{d.name}</div>
+        <div className="sub">{d.epithet}</div>
+        <div className="ab">{d.ability}</div>
       </div>
       <div className="foot"><span>{d.code}</span><span>SEAL · ADJEI</span></div>
     </div>
@@ -83,17 +74,38 @@ const TableScreen = ({
   dealing = false, dealDuration = 1600, dealStagger = 90,
   turnSeconds = 30, turnKey = 0, sunDimDepth = 0.75,
 }) => {
-  // ── Seat order (you at idx 0, then clockwise around the arena) ──
-  const SEATS = [
-    { id: 'you',     name: 'HOUSE ADJEI',   house: 'Σ · 2 FACES',  cowries: 7,  cards: [{role: role1, state: 'up'}, {role: role2, state: 'up'}], you: true,  pos: null },
-    { id: 'kwena',   name: 'HOUSE KWENA',   house: 'Ξ · 2 FACES',  cowries: 11, cards: [{role: 'KORO',  state: 'back'}, {role: 'GRIOT', state: 'back'}], you: false, pos: 'right' },
-    { id: 'okonkwo', name: 'HOUSE OKONKWO', house: 'Ψ · 1 FACE',   cowries: 3,  cards: [{role: 'GRIOT', state: 'back'}, {role: 'NJALA', state: 'forfeit'}], you: false, pos: 'tr', accused: true },
-    { id: 'tembo',   name: 'HOUSE TEMBO',   house: 'Θ · 2 FACES',  cowries: 9,  cards: [{role: 'OBA',   state: 'back'}, {role: 'NJALA', state: 'back'}], you: false, pos: 'top' },
-    { id: 'onwu',    name: 'HOUSE ONWU',    house: 'Ω · 2 FACES',  cowries: 4,  cards: [{role: 'KORO',  state: 'back'}, {role: 'IYA',   state: 'back'}], you: false, pos: 'tl' },
-    { id: 'banda',   name: 'HOUSE BANDA',   house: 'Δ · 2 FACES',  cowries: 6,  cards: [{role: 'IYA',   state: 'back'}, {role: 'OBA',   state: 'back'}], you: false, pos: 'left' },
-  ];
+  // ── Match start: build shuffled deck & deal 2 random cards to each seat ──
+  // The deck lives in DECK_COMPOSITION (data/config.js). Each player gets 2
+  // random roles drawn without replacement; the remainder stays in the deck
+  // and can be drawn by EXCHANGE. Seats are hardcoded in data/players.js
+  // but their starting roles are replaced here. useMemo keeps the deal
+  // stable across re-renders.
+  const shuffleArr = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const initialDeal = React.useMemo(() => {
+    const pool = [];
+    Object.entries(DECK_COMPOSITION || { OBA:3, NJALA:3, KORO:3, GRIOT:3, IYA:3 })
+      .forEach(([role, n]) => { for (let i = 0; i < n; i++) pool.push(role); });
+    const deck = shuffleArr(pool);
+    const seats = DEFAULT_SEATS.map(s => ({
+      ...s,
+      accused: false,                     // wipe hardcoded "accused" flavor
+      cards: [
+        { role: deck.pop(), state: s.you ? 'up' : 'back' },
+        { role: deck.pop(), state: s.you ? 'up' : 'back' },
+      ],
+    }));
+    return { seats, deck };
+  }, []);
 
-  const [players, setPlayers]  = React.useState(SEATS);
+  const [players, setPlayers]  = React.useState(initialDeal.seats);
+  const [deck, setDeck]        = React.useState(initialDeal.deck);
   const [reserve, setReserve]  = React.useState(pile);
   const [reserveBump, setReserveBump] = React.useState(false);
   const [youCowrieBump, setYouCowrieBump] = React.useState(false);
@@ -107,6 +119,16 @@ const TableScreen = ({
   const [logEntries, setLogEntries] = React.useState([
     { id: 0, txt: "THE COURT CONVENES.", hot: null, cls: "cel" },
   ]);
+  // Reaction window: UI state for who can challenge/block right now,
+  // plus a ref that declareAction/handleBlock await on until the window
+  // resolves (either via a player click, AI decision, or timeout).
+  const [reactionUI, setReactionUI] = React.useState(null);
+  const reactionRef = React.useRef(null);
+  // Pickers for the main player: when YOU lose a face (bluff caught,
+  // STRIKE, COUP) you choose which card to turn up; when YOU EXCHANGE,
+  // you see a drawn role and choose whether to swap one of yours for it.
+  const [lossPicker, setLossPicker] = React.useState(null);         // { options, onPick }
+  const [exchangePicker, setExchangePicker] = React.useState(null); // { yourCards, drawn, onSwap, onKeep }
 
   // Turn timer drives the sun's dim. Restart whenever turnKey changes.
   const [elapsed, setElapsed] = React.useState(0);
@@ -148,6 +170,159 @@ const TableScreen = ({
   };
 
   const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // ── Bluff / challenge / block helpers ────────────────────────
+  // Does player `pid` actually hold (non-forfeit) card with `role`?
+  // This is the single source of truth for "bluff vs. reveal" resolution.
+  const playerHasRole = (pid, role) => {
+    if (!role) return false;
+    const p = playersRef.current.find(x => x.id === pid);
+    if (!p) return false;
+    return p.cards.some(c => c.role === role && c.state !== 'forfeit' && c.state !== 'justForfeit');
+  };
+
+  // When an AI blocks, they claim a role from def.blockableBy.
+  // Prefer an owned role (truth), else bluff with any of them.
+  const aiPickBlockRole = (ai, blockableBy) => {
+    const owned = blockableBy.find(r => ai.cards.some(c => c.role === r && c.state !== 'forfeit'));
+    return owned || blockableBy[Math.floor(Math.random() * blockableBy.length)];
+  };
+
+  // AI probability models — tuned so challenges are rare but real.
+  const aiChallengeProb = (ai, actor, def) => {
+    if (!def.challengeable) return 0;
+    const actorAlive = actor.cards.filter(c => c.state !== 'forfeit').length;
+    const aiHoldsClaim = def.role && ai.cards.some(c => c.role === def.role && c.state !== 'forfeit');
+    let p = 0.08;
+    if (aiHoldsClaim) p += 0.22;  // "I hold the Oba myself — they're probably bluffing"
+    if (actorAlive === 1) p += 0.14; // tempting to knock out a 1-face house
+    return Math.min(p, 0.5);
+  };
+  const aiBlockProb = (ai, actor, def) => {
+    if (!def.blockableBy.length) return 0;
+    const hasBlockRole = ai.cards.some(c => def.blockableBy.includes(c.role) && c.state !== 'forfeit');
+    return hasBlockRole ? 0.72 : 0.18; // truthful blocks common, bluffs occasional
+  };
+  const aiCounterChallengeProb = (actor, blocker, claimedRole) => {
+    const blockerAlive = blocker.cards.filter(c => c.state !== 'forfeit').length;
+    const actorHoldsClaim = actor.cards.some(c => c.role === claimedRole && c.state !== 'forfeit');
+    let p = 0.12;
+    if (actorHoldsClaim) p += 0.22;
+    if (blockerAlive === 1) p += 0.14;
+    return Math.min(p, 0.5);
+  };
+
+  // Open a reaction window. Returns a Promise that resolves with
+  //   { kind: 'challenge', by }                     — someone challenged
+  //   { kind: 'block', by, claimedRole }            — someone blocked
+  //   null                                          — allowed to proceed
+  // ctx.mode is either 'action' (reacting to a freshly-declared action)
+  // or 'block' (original actor may counter-challenge a pending block).
+  const openReactionWindow = (windowMs, ctx) => {
+    return new Promise(resolve => {
+      let finished = false;
+      const aiTimers = [];
+      const finish = (payload) => {
+        if (finished) return;
+        finished = true;
+        aiTimers.forEach(id => clearTimeout(id));
+        clearInterval(tickId);
+        clearTimeout(mainId);
+        setChallengeTimer(0);
+        setReactionUI(null);
+        reactionRef.current = null;
+        resolve(payload);
+      };
+      reactionRef.current = { resolve: finish, ctx };
+      setChallengeTimer(Math.ceil(windowMs / 1000));
+      const tickId = setInterval(() => setChallengeTimer(t => Math.max(0, t - 1)), 1000);
+      const mainId = setTimeout(() => finish(null), windowMs);
+
+      // What can YOU do in this window?
+      const ps = playersRef.current;
+      const you = ps.find(p => p.id === 'you');
+      const youAlive = you && you.alive !== false && you.cards.some(c => c.state !== 'forfeit');
+      let ui = null;
+      if (ctx.mode === 'action') {
+        const { actor, target, def } = ctx;
+        if (actor.id !== 'you' && youAlive) {
+          const canChallenge = !!def.challengeable;
+          const canBlock = def.blockableBy.length > 0 && (!def.targeted || target?.id === 'you');
+          if (canChallenge || canBlock) ui = { mode: 'action', canChallenge, canBlock };
+        }
+      } else if (ctx.mode === 'block') {
+        const { actorId } = ctx;
+        if (actorId === 'you' && youAlive) ui = { mode: 'block' };
+      }
+      setReactionUI(ui);
+
+      // Schedule AI reactions (each AI decides independently; first to fire wins).
+      if (ctx.mode === 'action') {
+        const { actor, target, def } = ctx;
+        if (def.challengeable) {
+          ps.filter(p => p.id !== actor.id && p.id !== 'you' && p.alive !== false).forEach(c => {
+            if (Math.random() < aiChallengeProb(c, actor, def)) {
+              const when = 1500 + Math.random() * Math.max(500, windowMs - 3000);
+              aiTimers.push(setTimeout(() => finish({ kind: 'challenge', by: c.id }), when));
+            }
+          });
+        }
+        if (def.blockableBy.length > 0) {
+          const blockCandidates = def.targeted
+            ? ps.filter(p => p.id === target?.id && p.id !== 'you' && p.alive !== false)
+            : ps.filter(p => p.id !== actor.id && p.id !== 'you' && p.alive !== false);
+          blockCandidates.forEach(b => {
+            if (Math.random() < aiBlockProb(b, actor, def)) {
+              const when = 1800 + Math.random() * Math.max(500, windowMs - 3200);
+              const claim = aiPickBlockRole(b, def.blockableBy);
+              aiTimers.push(setTimeout(() => finish({ kind: 'block', by: b.id, claimedRole: claim }), when));
+            }
+          });
+        }
+      } else if (ctx.mode === 'block') {
+        const { actorId, blockerId, claimedRole } = ctx;
+        if (actorId !== 'you') {
+          const actor = ps.find(p => p.id === actorId);
+          const blocker = ps.find(p => p.id === blockerId);
+          if (actor && blocker && Math.random() < aiCounterChallengeProb(actor, blocker, claimedRole)) {
+            const when = 1200 + Math.random() * Math.max(500, windowMs - 2500);
+            aiTimers.push(setTimeout(() => finish({ kind: 'challenge', by: actor.id }), when));
+          }
+        }
+      }
+    });
+  };
+
+  // Resolve a block: optionally counter-challenged by the original actor.
+  // Returns true if the block stands (action is denied), false if it fails
+  // (block was a bluff → action proceeds).
+  const handleBlock = async (reaction, actor, def) => {
+    const { by: blockerId, claimedRole } = reaction;
+    const blocker = playersRef.current.find(p => p.id === blockerId);
+    addLog(`${blocker.name} BLOCKS — claims the <b>${claimedRole}</b>.`, null, 'cel');
+    setDeclared(prev => prev ? { ...prev, blockedBy: blockerId, blockRole: claimedRole } : prev);
+    await delay(500);
+
+    const cc = await openReactionWindow(4000, { mode: 'block', actorId: actor.id, blockerId, claimedRole });
+    if (cc && cc.kind === 'challenge') {
+      const challenger = playersRef.current.find(p => p.id === cc.by);
+      addLog(`${challenger.name} challenges the block!`, null, 'verm');
+      await delay(500);
+      if (playerHasRole(blockerId, claimedRole)) {
+        addLog(`${blocker.name} REVEALS the <b>${claimedRole}</b>. ${challenger.name} loses a face.`, null, 'verm');
+        await flashWord('challenge', 'REVEALED.', `· ${challenger.name} LOSES A FACE ·`);
+        await forfeitCard(cc.by);
+        return true;   // block stands — action denied
+      }
+      addLog(`${blocker.name} was BLUFFING — holds no <b>${claimedRole}</b>. A face is unseated.`, null, 'verm');
+      await flashWord('challenge', 'BLUFF.', `· ${blocker.name} LOSES A FACE ·`);
+      await forfeitCard(blockerId);
+      return false;    // block fails — action proceeds
+    }
+    addLog(`${actor.name} stands down. The ${def.label} is denied.`, null, '');
+    await delay(400);
+    return true;       // block stood unchallenged
+  };
 
   // ── Turn engine (run when currentTurn or phase changes) ──
   // Use a ref for the AI timer so a state-driven re-render of this effect
@@ -207,22 +382,48 @@ const TableScreen = ({
       actionId === 'coup'     ? `unleashes a <b>COUP</b> on ${target?.name}.` : '';
     addLog(`${actor.name} ${verbLine}`, null, def.hostile ? "verm" : "");
 
-    // Challenge window (prototype: brief window, auto-allow)
+    // ── Reaction window: challenge the action, or block it ──
+    // Consequences follow Coup rules:
+    //   Challenge → reveal. If actor holds the claimed role, the
+    //     challenger forfeits a face; otherwise the actor forfeits
+    //     a face and the action is cancelled.
+    //   Block    → the blocker claims a blocking role. The original
+    //     actor then gets a brief counter-challenge window, same
+    //     reveal-vs-bluff consequences apply. An unchallenged block
+    //     stands and the action is denied.
+    let cancelled = false;
+    let blocked = false;
+
     if (def.challengeable || def.blockableBy.length > 0) {
-      // Give a 1800ms reactive window
-      setChallengeTimer(2);
-      const tickId = setInterval(() => {
-        setChallengeTimer(t => Math.max(0, t - 1));
-      }, 900);
-      await delay(1800);
-      clearInterval(tickId);
-      setChallengeTimer(0);
+      const reaction = await openReactionWindow(5000, { mode: 'action', actor, target, def });
+
+      if (reaction && reaction.kind === 'challenge') {
+        const challenger = playersRef.current.find(p => p.id === reaction.by);
+        addLog(`${challenger.name} CHALLENGES ${actor.name}'s ${def.label} claim!`, null, 'verm');
+        await delay(500);
+        if (playerHasRole(actorId, def.role)) {
+          addLog(`${actor.name} REVEALS the <b>${def.role}</b>. ${challenger.name} loses a face.`, null, 'verm');
+          await flashWord('challenge', 'REVEALED.', `· ${challenger.name} LOSES A FACE ·`);
+          await forfeitCard(reaction.by);
+        } else {
+          addLog(`${actor.name} was BLUFFING — holds no <b>${def.role}</b>. A face is unseated.`, null, 'verm');
+          await flashWord('challenge', 'BLUFF.', `· ${actor.name} LOSES A FACE ·`);
+          await forfeitCard(actorId);
+          cancelled = true;
+        }
+      } else if (reaction && reaction.kind === 'block') {
+        blocked = await handleBlock(reaction, actor, def);
+      }
     } else {
       await delay(450);
     }
 
-    // Resolve
-    await resolveAction(actionId, actorId, targetId);
+    if (!cancelled && !blocked) {
+      await resolveAction(actionId, actorId, targetId);
+    } else {
+      await delay(350);
+      endTurn();
+    }
   };
 
   // ── Resolution with animations ──
@@ -260,17 +461,24 @@ const TableScreen = ({
       // Card whirl animation
       setExchangeFx(true);
       await flashWord('exchange', 'EXCHANGE', '· A NEW FACE CLAIMED ·');
-      await delay(800);
+      await delay(600);
       setExchangeFx(false);
-      addLog(`${players.find(p=>p.id===actorId).name} exchanges — a new face.`, null, "cel");
+      if (actorId === 'you') {
+        // Main player: show the drawn card and let them swap or keep.
+        await runExchangeForYou();
+      } else {
+        // AI exchange is purely cosmetic in the prototype — their hand
+        // stays unchanged and no deck interaction is shown.
+        addLog(`${players.find(p=>p.id===actorId).name} exchanges — a new face.`, null, "cel");
+      }
     } else if (actionId === 'strike') {
-      await flashWord('strike', 'STRIKE.', `· ${players.find(p=>p.id===targetId)?.name} FORFEITS A FACE ·`);
-      forfeitCard(targetId);
-      addLog(`${players.find(p=>p.id===actorId).name} strikes ${players.find(p=>p.id===targetId)?.name}.`, "STRIKE", "verm");
+      await flashWord('strike', 'STRIKE.', `· ${playersRef.current.find(p=>p.id===targetId)?.name} FORFEITS A FACE ·`);
+      addLog(`${playersRef.current.find(p=>p.id===actorId).name} strikes ${playersRef.current.find(p=>p.id===targetId)?.name}.`, "STRIKE", "verm");
+      await forfeitCard(targetId);
     } else if (actionId === 'coup') {
-      await flashWord('coup', 'COUP.', `· ${players.find(p=>p.id===targetId)?.name} IS UNSEATED ·`);
-      forfeitCard(targetId);
-      addLog(`${players.find(p=>p.id===actorId).name} stages a COUP on ${players.find(p=>p.id===targetId)?.name}.`, "COUP", "verm");
+      await flashWord('coup', 'COUP.', `· ${playersRef.current.find(p=>p.id===targetId)?.name} IS UNSEATED ·`);
+      addLog(`${playersRef.current.find(p=>p.id===actorId).name} stages a COUP on ${playersRef.current.find(p=>p.id===targetId)?.name}.`, "COUP", "verm");
+      await forfeitCard(targetId);
     }
 
     await delay(450);
@@ -324,23 +532,99 @@ const TableScreen = ({
     }, 700);
   };
 
-  const forfeitCard = (playerId) => {
-    setPlayers(prev => prev.map(p => {
-      if (p.id !== playerId) return p;
-      const cards = p.cards.slice();
-      const firstUp = cards.findIndex(c => c.state !== 'forfeit' && c.state !== 'justForfeit');
-      if (firstUp === -1) return p;
-      // Use transitional state 'justForfeit' so the .forfeit dimming doesn't apply during the flip animation
-      cards[firstUp] = { ...cards[firstUp], state: 'justForfeit', justForfeit: true };
-      return { ...p, cards };
+  // Forfeit one face. For YOU (when more than one live card remains) open
+  // the loss-picker modal so the player chooses which card to reveal; for
+  // AI (and for YOU when only one face is left) auto-pick the first live
+  // slot. Returns a Promise that resolves once the flip animation has
+  // settled — callers should `await forfeitCard(...)` so downstream
+  // phases (end-of-turn, next reaction) don't race with the animation.
+  const forfeitCard = async (playerId) => {
+    const p = playersRef.current.find(x => x.id === playerId);
+    if (!p) return;
+    const liveCards = p.cards
+      .map((c, i) => ({ role: c.role, state: c.state, idx: i }))
+      .filter(c => c.state !== 'forfeit' && c.state !== 'justForfeit');
+    if (liveCards.length === 0) return;
+
+    let chosenIdx;
+    if (playerId === 'you' && liveCards.length > 1) {
+      chosenIdx = await new Promise(resolve => {
+        setLossPicker({
+          options: liveCards,
+          onPick: (idx) => { setLossPicker(null); resolve(idx); },
+        });
+      });
+    } else {
+      chosenIdx = liveCards[0].idx;
+    }
+
+    // Transitional state — the .forfeit dim shouldn't apply during the flip
+    setPlayers(prev => prev.map(pp => {
+      if (pp.id !== playerId) return pp;
+      const cards = pp.cards.slice();
+      cards[chosenIdx] = { ...cards[chosenIdx], state: 'justForfeit', justForfeit: true };
+      return { ...pp, cards };
     }));
-    // After animation, settle to permanent 'forfeit' state
-    setTimeout(() => {
-      setPlayers(prev => prev.map(p => {
-        if (p.id !== playerId) return p;
-        return { ...p, cards: p.cards.map(c => c.state === 'justForfeit' ? { ...c, state: 'forfeit', justForfeit: false } : c) };
+
+    // Settle to permanent 'forfeit' after the animation window
+    await new Promise(resolve => setTimeout(() => {
+      setPlayers(prev => prev.map(pp => {
+        if (pp.id !== playerId) return pp;
+        return {
+          ...pp,
+          cards: pp.cards.map(c =>
+            c.state === 'justForfeit'
+              ? { ...c, state: 'forfeit', justForfeit: false }
+              : c
+          ),
+        };
       }));
-    }, 1700);
+      resolve();
+    }, 1700));
+  };
+
+  // ── EXCHANGE for the main player ───────────────────────────────
+  // Draw one card from the deck, present it next to your live faces,
+  // and let you swap one of them for it or keep your hand. The card
+  // that leaves your hand is shuffled back into the deck.
+  const runExchangeForYou = async () => {
+    if (deck.length === 0) {
+      addLog(`The deck is closed — no face to draw.`, null, "");
+      await delay(400);
+      return;
+    }
+    const drawnRole = deck[deck.length - 1];
+    const withoutDrawn = deck.slice(0, -1);
+    const you = playersRef.current.find(p => p.id === 'you');
+    const yourLive = you.cards
+      .map((c, i) => ({ role: c.role, idx: i, state: c.state }))
+      .filter(c => c.state !== 'forfeit' && c.state !== 'justForfeit');
+    if (yourLive.length === 0) return; // already unseated — shouldn't happen mid-turn
+
+    const pick = await new Promise(resolve => {
+      setExchangePicker({
+        yourCards: yourLive,
+        drawn: drawnRole,
+        onSwap: (cardIdx) => { setExchangePicker(null); resolve({ swap: true, cardIdx }); },
+        onKeep: ()          => { setExchangePicker(null); resolve({ swap: false }); },
+      });
+    });
+
+    if (pick.swap) {
+      const oldRole = you.cards[pick.cardIdx].role;
+      setPlayers(prev => prev.map(p => {
+        if (p.id !== 'you') return p;
+        const cards = p.cards.slice();
+        cards[pick.cardIdx] = { ...cards[pick.cardIdx], role: drawnRole };
+        return { ...p, cards };
+      }));
+      setDeck(shuffleArr([oldRole, ...withoutDrawn]));
+      addLog(`You swap a face for the <b>${drawnRole}</b>.`, null, "cel");
+    } else {
+      setDeck(shuffleArr([drawnRole, ...withoutDrawn]));
+      addLog(`You hold your hand. The Griot's draw returns to the deck.`, null, "");
+    }
+    await delay(300);
   };
 
   // ── Coin flow animation: spawn N coins flying sx,sy → tx,ty ──
@@ -463,12 +747,26 @@ const TableScreen = ({
     declareAction(actionId, 'you', oppId);
   };
 
-  // ── Player-triggered challenge (prototype: visual only) ──
+  // ── Player reaction handlers (resolve the open reaction window) ──
   const onChallenge = () => {
-    if (!declared) return;
-    addLog(`<b>HOUSE ADJEI</b> calls challenge on ${ACTION_DEFS[declared.actionId].label}!`, null, "verm");
-    // In prototype: briefly shake, then proceed (actor "had the card")
-    setChallengeTimer(0);
+    if (!reactionRef.current) return;
+    reactionRef.current.resolve({ kind: 'challenge', by: 'you' });
+  };
+  const onBlock = () => {
+    if (!reactionRef.current) return;
+    const ctx = reactionRef.current.ctx;
+    if (!ctx || ctx.mode !== 'action' || !ctx.def.blockableBy.length) return;
+    const blockableBy = ctx.def.blockableBy;
+    const you = playersRef.current.find(p => p.id === 'you');
+    // Claim a role you actually hold if possible (safer against a
+    // counter-challenge); otherwise bluff with the first option.
+    const owned = blockableBy.find(r => you && you.cards.some(c => c.role === r && c.state !== 'forfeit'));
+    const claimedRole = owned || blockableBy[0];
+    reactionRef.current.resolve({ kind: 'block', by: 'you', claimedRole });
+  };
+  const onAllow = () => {
+    if (!reactionRef.current) return;
+    reactionRef.current.resolve(null);
   };
 
   // ── Deal overlay ──
@@ -517,6 +815,11 @@ const TableScreen = ({
   const you = players[0];
   const targeted = phase === 'target-select';
 
+  // YOU is "alive" (seated) as long as at least one face is not forfeited.
+  // Transitional 'justForfeit' still counts as live; only 'forfeit' burns a seat.
+  // When false, every action/reaction button disables and the rack shows
+  // the UNSEATED badge — spectator mode for the player's house.
+  const youAlive = you && you.cards.some(c => c.state !== 'forfeit');
   const forcedCoup = you.cowries >= 10;
 
   return (
@@ -591,16 +894,36 @@ const TableScreen = ({
           </div>
         )}
 
-        {/* ── Challenge window (brief reactive moment) ── */}
-        {declared && phase === 'declared' && (ACTION_DEFS[declared.actionId].challengeable || ACTION_DEFS[declared.actionId].blockableBy.length > 0) && declared.actorId !== 'you' && challengeTimer > 0 && (
+        {/* ── Block banner (shown while a block is pending / being counter-challenged) ── */}
+        {declared && declared.blockedBy && (
+          <div className="action-banner" style={{top: '92px'}}>
+            <span className="who">{players.find(p=>p.id===declared.blockedBy)?.name}</span>
+            {' BLOCKS — CLAIMS '}
+            <span className="act">{declared.blockRole}</span>
+            <span className="sub">{`· BLOCKS THE ${ACTION_DEFS[declared.actionId].label} ·`}</span>
+          </div>
+        )}
+
+        {/* ── Reaction window (drives ALL player-side challenges & blocks) ── */}
+        {reactionUI && (
           <div className="challenge-window">
-            {ACTION_DEFS[declared.actionId].challengeable && (
-              <button className="cw-btn chal" onClick={onChallenge}>CHALLENGE</button>
+            {reactionUI.mode === 'action' && (
+              <>
+                {reactionUI.canChallenge && (
+                  <button className="cw-btn chal" onClick={onChallenge}>CHALLENGE</button>
+                )}
+                {reactionUI.canBlock && (
+                  <button className="cw-btn block" onClick={onBlock}>BLOCK</button>
+                )}
+                <button className="cw-btn pass" onClick={onAllow}>ALLOW</button>
+              </>
             )}
-            {ACTION_DEFS[declared.actionId].blockableBy.length > 0 && (
-              <button className="cw-btn block" onClick={() => { setChallengeTimer(0); addLog(`<b>HOUSE ADJEI</b> moves to BLOCK.`, null, "cel"); }}>BLOCK</button>
+            {reactionUI.mode === 'block' && (
+              <>
+                <button className="cw-btn chal" onClick={onChallenge}>CHALLENGE BLOCK</button>
+                <button className="cw-btn pass" onClick={onAllow}>ACCEPT</button>
+              </>
             )}
-            <button className="cw-btn pass" onClick={() => setChallengeTimer(0)}>ALLOW</button>
             <span className="cw-timer">{challengeTimer}s</span>
           </div>
         )}
@@ -618,6 +941,50 @@ const TableScreen = ({
           <div className="fx-exchange-cards">
             <div className="mc"/>
             <div className="mc"/>
+          </div>
+        )}
+
+        {/* ── Loss picker (YOU chooses which face to forfeit) ── */}
+        {lossPicker && (
+          <div className="fx-modal">
+            <div className="fx-modal-inner">
+              <div className="fx-modal-title">· FORFEIT A FACE ·</div>
+              <div className="fx-modal-sub">Choose which card to turn up.</div>
+              <div className="fx-modal-cards">
+                {lossPicker.options.map(o => (
+                  <button key={o.idx} className="fx-modal-card" onClick={() => lossPicker.onPick(o.idx)}>
+                    <div className="fx-modal-card-role">{o.role}</div>
+                    <div className="fx-modal-card-epithet">{ROLE_DEFS[o.role]?.epithet || ''}</div>
+                    <div className="fx-modal-card-sub">· REVEAL ·</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Exchange picker (YOU draws 1 and swaps or keeps) ── */}
+        {exchangePicker && (
+          <div className="fx-modal">
+            <div className="fx-modal-inner">
+              <div className="fx-modal-title">· GRIOT'S EXCHANGE ·</div>
+              <div className="fx-modal-sub">Swap one of your faces for the drawn role, or hold your hand.</div>
+              <div className="fx-modal-cards">
+                {exchangePicker.yourCards.map(c => (
+                  <button key={c.idx} className="fx-modal-card" onClick={() => exchangePicker.onSwap(c.idx)}>
+                    <div className="fx-modal-card-role">{c.role}</div>
+                    <div className="fx-modal-card-epithet">{ROLE_DEFS[c.role]?.epithet || ''}</div>
+                    <div className="fx-modal-card-sub">· SWAP FOR DRAWN ·</div>
+                  </button>
+                ))}
+                <div className="fx-modal-card drawn">
+                  <div className="fx-modal-card-role">{exchangePicker.drawn}</div>
+                  <div className="fx-modal-card-epithet">{ROLE_DEFS[exchangePicker.drawn]?.epithet || ''}</div>
+                  <div className="fx-modal-card-sub">· DRAWN FROM DECK ·</div>
+                </div>
+              </div>
+              <button className="fx-modal-keep" onClick={exchangePicker.onKeep}>KEEP HAND</button>
+            </div>
           </div>
         )}
 
@@ -667,9 +1034,11 @@ const TableScreen = ({
       </div>
 
       {/* ── Hand rack (YOU) ── */}
-      <div className="hand-rack">
+      <div className={"hand-rack" + (!youAlive ? " unseated" : "")}>
         <div className="hand-left player-panel">
-          <div style={{fontFamily:'var(--font-mono)', fontSize:'10px', letterSpacing:'0.26em', color:'var(--sun-300)', marginBottom:'6px'}}>· YOUR HOUSE ·</div>
+          <div style={{fontFamily:'var(--font-mono)', fontSize:'10px', letterSpacing:'0.26em', color: youAlive ? 'var(--sun-300)' : 'var(--verm-300)', marginBottom:'6px'}}>
+            {youAlive ? '· YOUR HOUSE ·' : '· HOUSE UNSEATED ·'}
+          </div>
           <h3 className="title">Adjei, the Morning</h3>
           <div className="cowries-big">
             <span className="sym"/>
@@ -680,27 +1049,42 @@ const TableScreen = ({
             <span className="chip" style={{background:'rgba(62,138,122,0.12)', borderColor:'rgba(62,138,122,0.3)', color:'var(--cel-300)'}}>
               {you.cards.filter(c=>c.state!=='forfeit').length} FACES
             </span>
-            <span className="chip">{isYourTurn ? 'SEATED' : 'WAITING'}</span>
+            <span className="chip" style={!youAlive ? {color:'var(--verm-300)', borderColor:'var(--verm-300)'} : {}}>
+              {!youAlive ? 'UNSEATED' : (isYourTurn ? 'SEATED' : 'WAITING')}
+            </span>
           </div>
         </div>
 
-        <div className={"hand-cards" + (isYourTurn ? " is-turn" : "")}>
-          <PlayerCard role={you.cards[0]?.role} forfeit={you.cards[0]?.state==='forfeit'}/>
-          <PlayerCard role={you.cards[1]?.role} forfeit={you.cards[1]?.state==='forfeit'}/>
+        <div className={"hand-cards" + (isYourTurn && youAlive ? " is-turn" : "")}>
+          <PlayerCard
+            role={you.cards[0]?.role}
+            forfeit={you.cards[0]?.state==='forfeit'}
+            justForfeit={you.cards[0]?.state==='justForfeit'}
+          />
+          <PlayerCard
+            role={you.cards[1]?.role}
+            forfeit={you.cards[1]?.state==='forfeit'}
+            justForfeit={you.cards[1]?.state==='justForfeit'}
+          />
         </div>
 
         <div className="hand-right actions-dock">
-          <div className="eyebrow"><span>· DECLARE ·</span><span style={{color: isYourTurn ? 'var(--star-gold)' : 'var(--ink-faint)'}}>{isYourTurn ? `${mm}:${ss}` : 'WAITING…'}</span></div>
+          <div className="eyebrow">
+            <span>· DECLARE ·</span>
+            <span style={{color: youAlive && isYourTurn ? 'var(--star-gold)' : 'var(--ink-faint)'}}>
+              {!youAlive ? 'UNSEATED' : (isYourTurn ? `${mm}:${ss}` : 'WAITING…')}
+            </span>
+          </div>
           <div className="actions-grid">
-            <button className={"act" + (!isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('income')}><span className="glyph">◐</span>INCOME · 1</button>
-            <button className={"act" + (!isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('aid')}><span className="glyph">◐</span>AID · 2</button>
-            <button className={"act seize" + (!isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('seize')}><span className="glyph">◐</span>SEIZE · 3</button>
-            <button className={"act" + (!isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('reave')}><span className="glyph">⊛</span>REAVE · 2</button>
-            <button className={"act strike" + (!isYourTurn || forcedCoup || you.cowries < 3 ? " disabled" : "")} onClick={() => onYouAction('strike')}><span className="glyph">⌇</span>STRIKE · 3</button>
-            <button className={"act coup" + (!isYourTurn || you.cowries < 7 ? " disabled" : "")} onClick={() => onYouAction('coup')}><span className="glyph">⚊</span>COUP · 7</button>
+            <button className={"act" + (!youAlive || !isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('income')}><span className="glyph">◐</span>INCOME · 1</button>
+            <button className={"act" + (!youAlive || !isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('aid')}><span className="glyph">◐</span>AID · 2</button>
+            <button className={"act seize" + (!youAlive || !isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('seize')}><span className="glyph">◐</span>SEIZE · 3</button>
+            <button className={"act" + (!youAlive || !isYourTurn || forcedCoup ? " disabled" : "")} onClick={() => onYouAction('reave')}><span className="glyph">⊛</span>REAVE · 2</button>
+            <button className={"act strike" + (!youAlive || !isYourTurn || forcedCoup || you.cowries < 3 ? " disabled" : "")} onClick={() => onYouAction('strike')}><span className="glyph">⌇</span>STRIKE · 3</button>
+            <button className={"act coup" + (!youAlive || !isYourTurn || you.cowries < 7 ? " disabled" : "")} onClick={() => onYouAction('coup')}><span className="glyph">⚊</span>COUP · 7</button>
           </div>
           <div style={{marginTop:'12px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px'}}>
-            <button className={"act" + (!isYourTurn || forcedCoup ? " disabled" : "")} style={{padding:'10px'}} onClick={() => onYouAction('exchange')}><span className="glyph" style={{fontSize:'14px'}}>⌬</span>EXCHANGE</button>
+            <button className={"act" + (!youAlive || !isYourTurn || forcedCoup ? " disabled" : "")} style={{padding:'10px'}} onClick={() => onYouAction('exchange')}><span className="glyph" style={{fontSize:'14px'}}>⌬</span>EXCHANGE</button>
             <button className="act" style={{padding:'10px'}} disabled><span className="glyph" style={{fontSize:'14px'}}>☽</span>BLOCK</button>
           </div>
         </div>

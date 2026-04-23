@@ -57,7 +57,7 @@
 }
 .arena-wrap::before {
   content: ""; position: absolute; inset: 0;
-  background-image: url("assets/constellations.svg");
+  background-image: url("../assets/constellations.svg");
   background-size: cover; opacity: 0.28; pointer-events: none;
 }
 
